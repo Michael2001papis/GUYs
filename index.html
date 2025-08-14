@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>כדורגל – כרטיסי שחקנים ובניית קבוצה</title>
+  <style>
+    :root{
+      --bg:#0f1226;--panel:#14183a;--muted:#aab1d6;--text:#eaf0ff;--accent:#7aa7ff;--accent-2:#7fffd4;--danger:#ff6b6b;
+      --card:#1c214f;--shadow:0 10px 30px rgba(0,0,0,.25);--radius:18px
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,segoe ui,roboto,ubuntu,cantarell,noto sans,helvetica,arial; background:radial-gradient(1200px 600px at 80% -10%,#1e265e,transparent),linear-gradient(180deg,#0b0e23,#080a1a); color:var(--text);}
+    header{padding:28px 18px 8px; text-align:center}
+    h1{margin:0 0 6px; font-size:clamp(28px,4vw,40px); letter-spacing:.5px}
+    .sub{color:var(--muted)}
+    main{max-width:1100px;margin:0 auto;padding:18px}
+
+    /* Cards grid */
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+    .card{background:linear-gradient(180deg,var(--card),#14183a);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;position:relative;overflow:hidden;transition:transform .15s ease, box-shadow .2s ease}
+    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
+    .badge{position:absolute;top:10px;left:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#07101f;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
+    .card img{width:100%;height:170px;object-fit:cover;border-radius:14px}
+    .card h3{margin:10px 0 6px;font-size:20px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+    .stats{display:flex;gap:10px;margin:12px 0}
+    .stat{background:#0f1333;border:1px solid #262c64;border-radius:12px;padding:6px 10px;font-size:12px}
+    .btn{cursor:pointer;border:0;border-radius:12px;padding:10px 12px;font-weight:700}
+    .btn-accent{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#06121f}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid #2a306a}
+
+    /* Team builder */
+    section{margin:26px 0}
+    .panel{background:linear-gradient(180deg,var(--panel),#10143a);border:1px solid #2a306a;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:700px){.row{grid-template-columns:1fr}}
+    label{font-size:14px;color:var(--muted)}
+    input,select{width:100%;background:#0f1333;border:1px solid #2a306a;color:var(--text);border-radius:12px;padding:10px}
+
+    .roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+    .slot{background:#0f1333;border:1px dashed #2a306a;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .slot .info{display:flex;flex-direction:column}
+    .slot .rm{background:transparent;border:1px solid #2a306a;color:var(--danger);border-radius:10px;padding:6px 8px;cursor:pointer}
+
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .count{margin-inline-start:auto;color:var(--muted)}
+
+    .toast{position:fixed;inset-inline:0;top:16px;display:flex;justify-content:center;pointer-events:none}
+    .toast > div{pointer-events:auto;background:#0f1333;border:1px solid #2a306a;padding:10px 14px;border-radius:999px}
+
+    footer{color:var(--muted);text-align:center;margin:30px 0 40px}
+    a{color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>כדורגל – כרטיסי שחקנים ובניית קבוצה</h1>
+    <div class="sub">6 כרטיסים (כולל כריסטיאנו רונאלדו) + יוצר קבוצה אישית, הוספת שחקנים בהתאמה אישית וייצוא JSON</div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>שחקנים בולטים</h2>
+      <div id="cards" class="cards" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="team-builder">
+      <h2>בניית הקבוצה שלי</h2>
+      <div class="row">
+        <div>
+          <label for="teamName">שם הקבוצה</label>
+          <input id="teamName" placeholder="הקלד/י שם קבוצה" />
+        </div>
+        <div>
+          <label for="formation">מערך</label>
+          <select id="formation">
+            <option>4-3-3</option>
+            <option>4-4-2</option>
+            <option>3-5-2</option>
+            <option>5-3-2</option>
+            <option>4-2-3-1</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="resetTeam" class="btn btn-ghost">איפוס קבוצה</button>
+        <button id="exportTeam" class="btn btn-accent">ייצוא הקבוצה ל‑JSON</button>
+        <span class="count" id="teamCount">0/11</span>
+      </div>
+      <div id="roster" class="roster" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="custom-player">
+      <h2>הוספת שחקן מותאם</h2>
+      <div class="row">
+        <div>
+          <label for="pName">שם השחקן</label>
+          <input id="pName" placeholder="לדוגמה: מיכאל פאפיסמדוב"/>
+        </div>
+        <div>
+          <label for="pPos">עמדה</label>
+          <select id="pPos">
+            <option>חלוץ</option>
+            <option>קשר</option>
+            <option>מגן</option>
+            <option>בלם</option>
+            <option>שוער</option>
+          </select>
+        </div>
+        <div>
+          <label for="pClub">מועדון</label>
+          <input id="pClub" placeholder="המועדון שלך" />
+        </div>
+        <div>
+          <label for="pOvr">דירוג כללי (0–99)</label>
+          <input id="pOvr" type="number" min="0" max="99" value="85" />
+        </div>
+        <div style="grid-column:1/-1">
+          <label for="pImg">תמונת שחקן (כתובת URL – לא חובה)</label>
+          <input id="pImg" placeholder="https://example.com/photo.jpg" />
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="addCustom" class="btn btn-accent">יצירת כרטיס שחקן</button>
+      </div>
+    </section>
+
+    <footer>
+      נבנה בסינגל‑פייל HTML, ללא ספריות חיצוניות. ניתן לשמור את הדף כ‑index.html ולהריץ מקומית.
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
+
+  <script>
+    // --- נתוני פתיחה: 6 שחקנים (כולל כריסטיאנו רונאלדו) ---
+    const initialPlayers = [
+      { id: crypto.randomUUID(), name: "כריסטיאנו רונאלדו", pos: "חלוץ", club: "אל נאצר", ovr: 90, img: placeholder("CR7") },
+      { id: crypto.randomUUID(), name: "ליאו מסי", pos: "חלוץ", club: "אינטר מיאמי", ovr: 91, img: placeholder("LM10") },
+      { id: crypto.randomUUID(), name: "קיליאן אמבפה", pos: "חלוץ", club: "ריאל מדריד", ovr: 92, img: placeholder("KM7") },
+      { id: crypto.randomUUID(), name: "ארלינג הולאנד", pos: "חלוץ", club: "מנצ'סטר סיטי", ovr: 92, img: placeholder("EH9") },
+      { id: crypto.randomUUID(), name: "קווין דה בריינה", pos: "קשר", club: "מנצ'סטר סיטי", ovr: 91, img: placeholder("KDB") },
+      { id: crypto.randomUUID(), name: "ווירג'יל ואן דייק", pos: "בלם", club: "ליברפול", ovr: 89, img: placeholder("VVD") },
+    ];
+
+    const state = {
+      players: [...initialPlayers],
+      team: [], // {id, name, pos, club, ovr}
+    };
+
+    const cardsEl = document.getElementById('cards');
+    const rosterEl = document.getElementById('roster');
+    const teamNameEl = document.getElementById('teamName');
+    const formationEl = document.getElementById('formation');
+    const teamCountEl = document.getElementById('teamCount');
+
+    function placeholder(text){
+      // SVG נתמך בכל הדפדפנים המודרניים – מצייר תמונת פלייסהולדר עם טקסט
+      const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'>\n<defs>\n<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\n<stop offset='0%' stop-color='#1d234f'/>\n<stop offset='100%' stop-color='#0f1333'/>\n</linearGradient>\n</defs>\n<rect width='100%' height='100%' fill='url(#g)'/>\n<text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='64' fill='#7aa7ff' opacity='0.9'>${text}</text>\n</svg>`);
+      return `data:image/svg+xml;charset=utf-8,${svg}`;
+    }
+
+    function renderCards(){
+      cardsEl.innerHTML = '';
+      state.players.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <span class="badge">OVR ${p.ovr}</span>
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <div class="meta"><span>${p.pos}</span> • <span>${p.club}</span></div>
+          <div class="stats">
+            <span class="stat">גילוי נאות: דמו</span>
+            <span class="stat">ID קצר: ${p.id.slice(0,6)}</span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-accent" data-add="${p.id}">הוסף לקבוצה</button>
+            <button class="btn btn-ghost" data-more="${p.id}">עוד פרטים</button>
+          </div>
+        `;
+        cardsEl.appendChild(card);
+      });
+
+      // האזנות לכפתורים
+      cardsEl.querySelectorAll('[data-add]').forEach(btn => btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-add');
+        const player = state.players.find(p => p.id === id);
+        if(player) addToTeam(player);
+      }));
+
+      cardsEl.querySelectorAll('[data-more]').forEach(btn => btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-more');
+        const p = state.players.find(x => x.id === id);
+        if(!p) return;
+        alert(`${p.name}\nעמדה: ${p.pos}\nמועדון: ${p.club}\nדירוג: ${p.ovr}`);
+      }));
+    }
+
+    function addToTeam(player){
+      if(state.team.length >= 11) return toast('הקבוצה מלאה (11/11)');
+      const exists = state.team.some(t => t.name === player.name && t.club === player.club);
+      if(exists) return toast('השחקן כבר נמצא בקבוצה');
+      state.team.push({ id: player.id, name: player.name, pos: player.pos, club: player.club, ovr: player.ovr });
+      renderTeam();
+      toast(`נוסף: ${player.name}`);
+    }
+
+    function removeFromTeam(id){
+      state.team = state.team.filter(p => p.id !== id);
+      renderTeam();
+    }
+
+    function renderTeam(){
+      teamCountEl.textContent = `${state.team.length}/11`;
+      rosterEl.innerHTML = '';
+      if(state.team.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'slot';
+        empty.innerHTML = '<span class="info">עוד אין שחקנים בקבוצה. בחר/י שחקנים מהכרטיסים למעלה או הוסף/י מותאם אישית.</span>';
+        rosterEl.appendChild(empty);
+        return;
+      }
+      state.team.forEach(p => {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.innerHTML = `
+          <div class="info"><strong>${p.name}</strong><span style="color:var(--muted)">${p.pos} • ${p.club}</span></div>
+          <button class="rm" title="הסרה" aria-label="הסרת ${p.name}">הסר</button>
+        `;
+        slot.querySelector('.rm').addEventListener('click', () => removeFromTeam(p.id));
+        rosterEl.appendChild(slot);
+      });
+    }
+
+    document.getElementById('resetTeam').addEventListener('click', () => { state.team = []; renderTeam(); toast('הקבוצה אופסה'); });
+
+    document.getElementById('exportTeam').addEventListener('click', () => {
+      const data = {
+        name: teamNameEl.value || 'הקבוצה שלי',
+        formation: formationEl.value,
+        players: state.team,
+        createdAt: new Date().toISOString(),
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `${data.name.replace(/\s+/g,'_')}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('addCustom').addEventListener('click', () => {
+      const name = document.getElementById('pName').value.trim();
+      const pos  = document.getElementById('pPos').value;
+      const club = document.getElementById('pClub').value.trim() || 'קבוצה מותאמת';
+      const ovr  = Math.max(0, Math.min(99, parseInt(document.getElementById('pOvr').value || '80', 10)));
+      const img  = (document.getElementById('pImg').value.trim()) || placeholder(name || 'Player');
+      if(!name) return toast('יש למלא שם שחקן');
+
+      const newP = { id: crypto.randomUUID(), name, pos, club, ovr, img };
+      state.players.unshift(newP);
+      renderCards();
+      toast('נוצר כרטיס שחקן!');
+      document.getElementById('pName').value = '';
+      document.getElementById('pClub').value = '';
+      document.getElementById('pImg').value = '';
+    });
+
+    function toast(msg){
+      const t = document.getElementById('toast');
+      const m = document.getElementById('toastMsg');
+      m.textContent = msg; t.hidden = false;
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => (t.hidden = true), 1800);
+    }
+
+    // אתחול ראשון
+    renderCards();
+    renderTeam();
+  </script>
+</body>
+</html>
