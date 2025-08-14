@@ -6,20 +6,33 @@
   <title>כדורגל – כרטיסי שחקנים ובניית קבוצה</title>
   <style>
     :root{
-      --bg:#0f1226;--panel:#14183a;--muted:#aab1d6;--text:#eaf0ff;--accent:#7aa7ff;--accent-2:#7fffd4;--danger:#ff6b6b;
+      --bg:#0f1226;--panel:#14183a;--muted:#aab1d6;--text:#eaf0ff;--accent:#7aa7ff;--accent-2:#7fffd4;--danger:#ff6b6b;--ok:#00d38b;
       --card:#1c214f;--shadow:0 10px 30px rgba(0,0,0,.25);--radius:18px
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,segoe ui,roboto,ubuntu,cantarell,noto sans,helvetica,arial; background:radial-gradient(1200px 600px at 80% -10%,#1e265e,transparent),linear-gradient(180deg,#0b0e23,#080a1a); color:var(--text);}
-    header{padding:28px 18px 8px; text-align:center}
-    h1{margin:0 0 6px; font-size:clamp(28px,4vw,40px); letter-spacing:.5px}
+    body{margin:0;font-family:system-ui,-apple-system,segoe ui,roboto,ubuntu,cantarell,noto sans,helvetica,arial;background:radial-gradient(1200px 600px at 80% -10%,#1e265e,transparent),linear-gradient(180deg,#0b0e23,#080a1a);color:var(--text)}
+
+    /* Top nav */
+    .topnav{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#0e1130cc,#0b0e23cc);backdrop-filter:blur(6px);border-bottom:1px solid #2a306a}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px}
+    .brand .ball{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#7fffd4,transparent 70%),radial-gradient(circle at 70% 70%,#7aa7ff,transparent 60%),#0f1333;border:1px solid #2a306a;box-shadow:0 0 12px #7fffd4aa inset}
+    .nav-actions{display:flex;gap:8px;align-items:center}
+    .auth-btn{background:transparent;color:var(--muted);border:1px solid #2a306a;border-radius:999px;padding:8px 12px;cursor:pointer}
+    .auth-btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#06121f;border:0}
+    .user-badge{display:flex;align-items:center;gap:8px;background:#0f1333;border:1px solid #2a306a;border-radius:999px;padding:6px 10px}
+    .logout{background:transparent;border:1px solid #2a306a;color:var(--danger);border-radius:999px;padding:4px 8px;cursor:pointer}
+
+    header{padding:28px 18px 8px;text-align:center}
+    h1{margin:0 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:.5px}
     .sub{color:var(--muted)}
     main{max-width:1100px;margin:0 auto;padding:18px}
 
     /* Cards grid */
+    .filters{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:10px;margin:10px 0 16px}
+    @media(max-width:800px){.filters{grid-template-columns:1fr 1fr;grid-auto-rows:1fr}}
     .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
     .card{background:linear-gradient(180deg,var(--card),#14183a);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;position:relative;overflow:hidden;transition:transform .15s ease, box-shadow .2s ease}
-    .card:hover{transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.35)}
+    .card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.35)}
     .badge{position:absolute;top:10px;left:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#07101f;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
     .card img{width:100%;height:170px;object-fit:cover;border-radius:14px}
     .card h3{margin:10px 0 6px;font-size:20px}
@@ -30,7 +43,7 @@
     .btn-accent{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#06121f}
     .btn-ghost{background:transparent;color:var(--muted);border:1px solid #2a306a}
 
-    /* Team builder */
+    /* Panels */
     section{margin:26px 0}
     .panel{background:linear-gradient(180deg,var(--panel),#10143a);border:1px solid #2a306a;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -38,31 +51,80 @@
     label{font-size:14px;color:var(--muted)}
     input,select{width:100%;background:#0f1333;border:1px solid #2a306a;color:var(--text);border-radius:12px;padding:10px}
 
+    /* Team */
     .roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
     .slot{background:#0f1333;border:1px dashed #2a306a;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
     .slot .info{display:flex;flex-direction:column}
     .slot .rm{background:transparent;border:1px solid #2a306a;color:var(--danger);border-radius:10px;padding:6px 8px;cursor:pointer}
-
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .count{margin-inline-start:auto;color:var(--muted)}
 
+    /* Toast */
     .toast{position:fixed;inset-inline:0;top:16px;display:flex;justify-content:center;pointer-events:none}
     .toast > div{pointer-events:auto;background:#0f1333;border:1px solid #2a306a;padding:10px 14px;border-radius:999px}
 
     footer{color:var(--muted);text-align:center;margin:30px 0 40px}
     a{color:var(--accent)}
+
+    /* Modal (native <dialog>) */
+    dialog.modal{border:0;border-radius:18px;padding:0;background:#0f1333;color:var(--text);box-shadow:var(--shadow);width:min(520px,92vw)}
+    .modal-card{padding:14px}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid #2a306a;padding-bottom:8px}
+    .close{background:transparent;border:1px solid #2a306a;color:var(--muted);border-radius:999px;padding:6px 10px;cursor:pointer}
+    .helper{color:var(--muted)}
+
+    /* Small state chips */
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid #2a306a;background:#0f1333;color:var(--muted);font-size:12px}
+    .chip.ok{color:#06121f;background:linear-gradient(90deg,var(--accent),var(--accent-2));border:0}
   </style>
 </head>
 <body>
+  <nav class="topnav" aria-label="סרגל עליון">
+    <div class="brand" aria-label="בית">
+      <span class="ball" aria-hidden="true"></span>
+      <span>ליגת‑מיני</span>
+    </div>
+    <div class="nav-actions">
+      <div id="userBadge" class="user-badge" hidden>
+        <span id="userHello">שלום, אורח</span>
+        <button id="logoutBtn" class="logout">התנתקות</button>
+      </div>
+      <button id="openLogin" class="auth-btn" aria-haspopup="dialog">התחברות</button>
+      <button id="openSignup" class="auth-btn primary" aria-haspopup="dialog">הרשמה</button>
+    </div>
+  </nav>
+
   <header>
-    <h1>כדורגל – כרטיסי שחקנים ובניית קבוצה</h1>
-    <div class="sub">6 כרטיסים (כולל כריסטיאנו רונאלדו) + יוצר קבוצה אישית, הוספת שחקנים בהתאמה אישית וייצוא JSON</div>
+    <h1>כרטיסי שחקנים ובניית קבוצה</h1>
+    <p class="sub">סינון, מיון, שמירת התקדמות, ייבוא/ייצוא – הכל בסינגל‑פייל</p>
   </header>
 
   <main>
     <section class="panel">
       <h2>שחקנים בולטים</h2>
+      <div class="filters" role="region" aria-label="מסננים">
+        <input id="q" placeholder="חיפוש לפי שם או מועדון" aria-label="חיפוש"/>
+        <select id="fPos" aria-label="סינון לפי עמדה">
+          <option value="">כל העמדות</option>
+          <option>חלוץ</option>
+          <option>קשר</option>
+          <option>מגן</option>
+          <option>בלם</option>
+          <option>שוער</option>
+        </select>
+        <select id="sortBy" aria-label="מיון">
+          <option value="ovrDesc">דירוג מהגבוה לנמוך</option>
+          <option value="ovrAsc">דירוג מהנמוך לגבוה</option>
+          <option value="name">שם (א״ב)</option>
+        </select>
+        <input id="minOvr" type="number" min="0" max="99" value="0" aria-label="מינ׳ דירוג"/>
+      </div>
       <div id="cards" class="cards" aria-live="polite"></div>
+      <div class="toolbar">
+        <button id="importBtn" class="btn btn-ghost">ייבוא שחקנים/קבוצה מ‑JSON</button>
+        <input id="importFile" type="file" accept="application/json" hidden />
+        <span class="chip" id="playersCount"></span>
+      </div>
     </section>
 
     <section class="panel" id="team-builder">
@@ -87,6 +149,7 @@
         <button id="resetTeam" class="btn btn-ghost">איפוס קבוצה</button>
         <button id="exportTeam" class="btn btn-accent">ייצוא הקבוצה ל‑JSON</button>
         <span class="count" id="teamCount">0/11</span>
+        <span class="chip" id="formationRule"></span>
       </div>
       <div id="roster" class="roster" aria-live="polite"></div>
     </section>
@@ -123,162 +186,399 @@
       </div>
       <div class="toolbar">
         <button id="addCustom" class="btn btn-accent">יצירת כרטיס שחקן</button>
+        <span class="chip" id="validationChip">שמור/י על דירוג בין 0 ל‑99</span>
       </div>
     </section>
 
     <footer>
-      נבנה בסינגל‑פייל HTML, ללא ספריות חיצוניות. ניתן לשמור את הדף כ‑index.html ולהריץ מקומית.
+      נבנה כסינגל‑פייל HTML, ללא ספריות חיצוניות. ניתן לשמור את הדף כ‑index.html ולהריץ מקומית.
     </footer>
+
+    <!-- Modals -->
+    <dialog id="loginModal" class="modal" aria-labelledby="loginTitle">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 id="loginTitle">התחברות</h3>
+          <button class="close" data-close="loginModal">סגור</button>
+        </div>
+        <form id="loginForm" class="form" method="dialog">
+          <div class="row">
+            <div>
+              <label for="loginEmail">אימייל</label>
+              <input id="loginEmail" type="email" required placeholder="name@example.com"/>
+            </div>
+            <div>
+              <label for="loginPass">סיסמה</label>
+              <input id="loginPass" type="password" required minlength="4" placeholder="••••"/>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-accent" type="submit">כניסה</button>
+            <span class="helper">אין לך חשבון? <a href="#" id="goSignup">להרשמה</a></span>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="signupModal" class="modal" aria-labelledby="signupTitle">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 id="signupTitle">הרשמה</h3>
+          <button class="close" data-close="signupModal">סגור</button>
+        </div>
+        <form id="signupForm" class="form" method="dialog">
+          <div class="row">
+            <div>
+              <label for="signupName">שם מלא</label>
+              <input id="signupName" required placeholder="ישראל ישראלי"/>
+            </div>
+            <div>
+              <label for="signupEmail">אימייל</label>
+              <input id="signupEmail" type="email" required placeholder="name@example.com"/>
+            </div>
+            <div>
+              <label for="signupPass">סיסמה</label>
+              <input id="signupPass" type="password" required minlength="4" placeholder="לפחות 4 תווים"/>
+            </div>
+            <div>
+              <label for="signupPass2">אימות סיסמה</label>
+              <input id="signupPass2" type="password" required minlength="4" placeholder="שוב סיסמה"/>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-accent" type="submit">צור חשבון</button>
+            <span class="helper">כבר רשומים? <a href="#" id="goLogin">להתחברות</a></span>
+          </div>
+        </form>
+      </div>
+    </dialog>
   </main>
 
   <div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
 
   <script>
-    // --- נתוני פתיחה: 6 שחקנים (כולל כריסטיאנו רונאלדו) ---
+    // ===== Utils & Persistence =====
+    const store = {
+      save(k, v){ localStorage.setItem(k, JSON.stringify(v)); },
+      load(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d }catch{ return d } },
+      remove(k){ localStorage.removeItem(k); }
+    };
+    const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : (Date.now()+"-"+Math.random().toString(36).slice(2)));
+
+    function placeholder(text){
+      const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'>\n<defs>\n<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\n<stop offset='0%' stop-color='#1d234f'/>\n<stop offset='100%' stop-color='#0f1333'/>\n</linearGradient>\n</defs>\n<rect width='100%' height='100%' fill='url(#g)'/>\n<text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='64' fill='#7aa7ff' opacity='0.9'>${text}</text>\n</svg>`);
+      return `data:image/svg+xml;charset=utf-8,${svg}`;
+    }
+
+    // ===== Data =====
     const initialPlayers = [
-      { id: crypto.randomUUID(), name: "כריסטיאנו רונאלדו", pos: "חלוץ", club: "אל נאצר", ovr: 90, img: placeholder("CR7") },
-      { id: crypto.randomUUID(), name: "ליאו מסי", pos: "חלוץ", club: "אינטר מיאמי", ovr: 91, img: placeholder("LM10") },
-      { id: crypto.randomUUID(), name: "קיליאן אמבפה", pos: "חלוץ", club: "ריאל מדריד", ovr: 92, img: placeholder("KM7") },
-      { id: crypto.randomUUID(), name: "ארלינג הולאנד", pos: "חלוץ", club: "מנצ'סטר סיטי", ovr: 92, img: placeholder("EH9") },
-      { id: crypto.randomUUID(), name: "קווין דה בריינה", pos: "קשר", club: "מנצ'סטר סיטי", ovr: 91, img: placeholder("KDB") },
-      { id: crypto.randomUUID(), name: "ווירג'יל ואן דייק", pos: "בלם", club: "ליברפול", ovr: 89, img: placeholder("VVD") },
+      { id: uid(), name: "כריסטיאנו רונאלדו", pos: "חלוץ", club: "אל נאצר", ovr: 90, img: placeholder("CR7") },
+      { id: uid(), name: "ליאו מסי", pos: "חלוץ", club: "אינטר מיאמי", ovr: 91, img: placeholder("LM10") },
+      { id: uid(), name: "קיליאן אמבפה", pos: "חלוץ", club: "ריאל מדריד", ovr: 92, img: placeholder("KM7") },
+      { id: uid(), name: "ארלינג הולאנד", pos: "חלוץ", club: "מנצ'סטר סיטי", ovr: 92, img: placeholder("EH9") },
+      { id: uid(), name: "קווין דה בריינה", pos: "קשר", club: "מנצ'סטר סיטי", ovr: 91, img: placeholder("KDB") },
+      { id: uid(), name: "ווירג'יל ואן דייק", pos: "בלם", club: "ליברפול", ovr: 89, img: placeholder("VVD") },
     ];
 
-    const state = {
-      players: [...initialPlayers],
-      team: [], // {id, name, pos, club, ovr}
+    const FORMATIONS = {
+      '4-3-3': { 'שוער':1, 'בלם':2, 'מגן':2, 'קשר':3, 'חלוץ':3 },
+      '4-4-2': { 'שוער':1, 'בלם':2, 'מגן':2, 'קשר':4, 'חלוץ':2 },
+      '3-5-2': { 'שוער':1, 'בלם':3, 'מגן':0, 'קשר':5, 'חלוץ':2 },
+      '5-3-2': { 'שוער':1, 'בלם':3, 'מגן':2, 'קשר':3, 'חלוץ':2 },
+      '4-2-3-1': { 'שוער':1, 'בלם':2, 'מגן':2, 'קשר':5, 'חלוץ':1 },
     };
 
+    const state = {
+      players: store.load('players', initialPlayers),
+      team: store.load('team', []),
+      teamName: store.load('teamName', ''),
+      formation: store.load('formation', '4-3-3'),
+      user: store.load('user', null),
+      filters: { q:'', pos:'', minOvr:0, sortBy:'ovrDesc' }
+    };
+
+    // ===== Elements =====
     const cardsEl = document.getElementById('cards');
     const rosterEl = document.getElementById('roster');
     const teamNameEl = document.getElementById('teamName');
     const formationEl = document.getElementById('formation');
     const teamCountEl = document.getElementById('teamCount');
+    const playersCountEl = document.getElementById('playersCount');
+    const formationRuleEl = document.getElementById('formationRule');
 
-    function placeholder(text){
-      // SVG נתמך בכל הדפדפנים המודרניים – מצייר תמונת פלייסהולדר עם טקסט
-      const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'>\n<defs>\n<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\n<stop offset='0%' stop-color='#1d234f'/>\n<stop offset='100%' stop-color='#0f1333'/>\n</linearGradient>\n</defs>\n<rect width='100%' height='100%' fill='url(#g)'/>\n<text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='system-ui' font-size='64' fill='#7aa7ff' opacity='0.9'>${text}</text>\n</svg>`);
-      return `data:image/svg+xml;charset=utf-8,${svg}`;
+    const qEl = document.getElementById('q');
+    const fPosEl = document.getElementById('fPos');
+    const sortByEl = document.getElementById('sortBy');
+    const minOvrEl = document.getElementById('minOvr');
+
+    const importBtn = document.getElementById('importBtn');
+    const importFile = document.getElementById('importFile');
+
+    // ===== Rendering =====
+    function activeRule(){ return FORMATIONS[state.formation] || FORMATIONS['4-3-3']; }
+
+    function renderFiltersInfo(){
+      playersCountEl.textContent = `סה"כ שחקנים: ${state.players.length}`;
+      const r = activeRule();
+      const span = Object.entries(r).map(([k,v])=>`${k}: ${v}`).join(' | ');
+      formationRuleEl.textContent = `מגבלות מערך – ${span}`;
+      formationEl.value = state.formation;
+      teamNameEl.value = state.teamName;
+    }
+
+    function getFilteredPlayers(){
+      const { q, pos, minOvr, sortBy } = state.filters;
+      let arr = state.players.filter(p => (
+        (!pos || p.pos===pos) &&
+        (p.ovr >= (Number(minOvr)||0)) &&
+        (!q || (`${p.name} ${p.club}`.toLowerCase().includes(q.toLowerCase())))
+      ));
+      if(sortBy==='ovrDesc') arr.sort((a,b)=>b.ovr-a.ovr);
+      else if(sortBy==='ovrAsc') arr.sort((a,b)=>a.ovr-b.ovr);
+      else if(sortBy==='name') arr.sort((a,b)=>a.name.localeCompare(b.name,'he'));
+      return arr;
     }
 
     function renderCards(){
-      cardsEl.innerHTML = '';
-      state.players.forEach(p => {
+      cardsEl.innerHTML='';
+      const list = getFilteredPlayers();
+      list.forEach(p=>{
         const card = document.createElement('article');
-        card.className = 'card';
+        card.className='card';
         card.innerHTML = `
-          <span class="badge">OVR ${p.ovr}</span>
-          <img src="${p.img}" alt="${p.name}" />
+          <span class="badge" aria-label="דירוג">OVR ${p.ovr}</span>
+          <img src="${p.img}" alt="${p.name}" loading="lazy"/>
           <h3>${p.name}</h3>
           <div class="meta"><span>${p.pos}</span> • <span>${p.club}</span></div>
           <div class="stats">
-            <span class="stat">גילוי נאות: דמו</span>
-            <span class="stat">ID קצר: ${p.id.slice(0,6)}</span>
+            <span class="stat">דמו</span>
+            <span class="stat">ID: ${p.id.slice(0,6)}</span>
           </div>
           <div style="display:flex;gap:10px">
-            <button class="btn btn-accent" data-add="${p.id}">הוסף לקבוצה</button>
-            <button class="btn btn-ghost" data-more="${p.id}">עוד פרטים</button>
+            <button class="btn btn-accent" data-action="add" data-id="${p.id}">הוסף לקבוצה</button>
+            <button class="btn btn-ghost" data-action="info" data-id="${p.id}">עוד פרטים</button>
           </div>
         `;
         cardsEl.appendChild(card);
       });
-
-      // האזנות לכפתורים
-      cardsEl.querySelectorAll('[data-add]').forEach(btn => btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-add');
-        const player = state.players.find(p => p.id === id);
-        if(player) addToTeam(player);
-      }));
-
-      cardsEl.querySelectorAll('[data-more]').forEach(btn => btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-more');
-        const p = state.players.find(x => x.id === id);
-        if(!p) return;
-        alert(`${p.name}\nעמדה: ${p.pos}\nמועדון: ${p.club}\nדירוג: ${p.ovr}`);
-      }));
-    }
-
-    function addToTeam(player){
-      if(state.team.length >= 11) return toast('הקבוצה מלאה (11/11)');
-      const exists = state.team.some(t => t.name === player.name && t.club === player.club);
-      if(exists) return toast('השחקן כבר נמצא בקבוצה');
-      state.team.push({ id: player.id, name: player.name, pos: player.pos, club: player.club, ovr: player.ovr });
-      renderTeam();
-      toast(`נוסף: ${player.name}`);
-    }
-
-    function removeFromTeam(id){
-      state.team = state.team.filter(p => p.id !== id);
-      renderTeam();
     }
 
     function renderTeam(){
       teamCountEl.textContent = `${state.team.length}/11`;
-      rosterEl.innerHTML = '';
-      if(state.team.length === 0){
+      rosterEl.innerHTML='';
+      if(state.team.length===0){
         const empty = document.createElement('div');
-        empty.className = 'slot';
-        empty.innerHTML = '<span class="info">עוד אין שחקנים בקבוצה. בחר/י שחקנים מהכרטיסים למעלה או הוסף/י מותאם אישית.</span>';
+        empty.className='slot';
+        empty.innerHTML='<span class="info">עוד אין שחקנים בקבוצה. בחר/י שחקנים מהכרטיסים למעלה או הוסף/י מותאם אישית.</span>';
         rosterEl.appendChild(empty);
         return;
       }
-      state.team.forEach(p => {
-        const slot = document.createElement('div');
-        slot.className = 'slot';
+      state.team.forEach(p=>{
+        const slot=document.createElement('div');
+        slot.className='slot';
         slot.innerHTML = `
-          <div class="info"><strong>${p.name}</strong><span style="color:var(--muted)">${p.pos} • ${p.club}</span></div>
-          <button class="rm" title="הסרה" aria-label="הסרת ${p.name}">הסר</button>
+          <div class="info"><strong>${p.name}</strong><span style="color:var(--muted)">${p.pos} • ${p.club} • OVR ${p.ovr}</span></div>
+          <button class="rm" title="הסרה" aria-label="הסרת ${p.name}" data-action="remove" data-id="${p.id}">הסר</button>
         `;
-        slot.querySelector('.rm').addEventListener('click', () => removeFromTeam(p.id));
         rosterEl.appendChild(slot);
       });
     }
 
-    document.getElementById('resetTeam').addEventListener('click', () => { state.team = []; renderTeam(); toast('הקבוצה אופסה'); });
+    function syncPersist(){
+      store.save('players', state.players);
+      store.save('team', state.team);
+      store.save('teamName', state.teamName);
+      store.save('formation', state.formation);
+      store.save('user', state.user);
+    }
 
-    document.getElementById('exportTeam').addEventListener('click', () => {
+    // ===== Team Logic with formation caps =====
+    function countsByPos(team){
+      return team.reduce((acc,p)=>{acc[p.pos]=(acc[p.pos]||0)+1; return acc;},{});
+    }
+    function canAdd(player){
+      if(state.team.length>=11) return [false,'הקבוצה מלאה (11/11)'];
+      if(state.team.some(t=>t.id===player.id)) return [false,'השחקן כבר בקבוצה'];
+      const caps = activeRule();
+      const cnt = countsByPos(state.team);
+      const used = cnt[player.pos]||0; const cap = caps[player.pos] ?? 0;
+      if(used>=cap) return [false,`הגעת למקסימום בעמדה ${player.pos} (${cap})`];
+      return [true,''];
+    }
+    function addToTeam(player){
+      const [ok,msg] = canAdd(player);
+      if(!ok) return toast(msg);
+      state.team.push({ id: player.id, name: player.name, pos: player.pos, club: player.club, ovr: player.ovr });
+      renderTeam();
+      syncPersist();
+      toast(`נוסף: ${player.name}`);
+    }
+    function removeFromTeam(id){
+      state.team = state.team.filter(p=>p.id!==id);
+      renderTeam();
+      syncPersist();
+    }
+
+    // ===== Cards events (delegation) =====
+    cardsEl.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-action]');
+      if(!btn) return;
+      const id = btn.getAttribute('data-id');
+      const action = btn.getAttribute('data-action');
+      const p = state.players.find(x=>x.id===id);
+      if(!p) return;
+      if(action==='add') addToTeam(p);
+      if(action==='info') alert(`${p.name}\nעמדה: ${p.pos}\nמועדון: ${p.club}\nדירוג: ${p.ovr}`);
+    });
+
+    // ===== Filters =====
+    function updateFilters(){
+      state.filters.q = qEl.value.trim();
+      state.filters.pos = fPosEl.value;
+      state.filters.sortBy = sortByEl.value;
+      state.filters.minOvr = Number(minOvrEl.value)||0;
+      renderCards();
+    }
+    qEl.addEventListener('input', updateFilters);
+    [fPosEl, sortByEl, minOvrEl].forEach(el=>el.addEventListener('change', updateFilters));
+
+    // ===== Top toolbar actions =====
+    document.getElementById('resetTeam').addEventListener('click', ()=>{
+      if(confirm('לאפס את הקבוצה?')){
+        state.team = []; renderTeam(); syncPersist(); toast('הקבוצה אופסה');
+      }
+    });
+
+    document.getElementById('exportTeam').addEventListener('click', ()=>{
       const data = {
-        name: teamNameEl.value || 'הקבוצה שלי',
-        formation: formationEl.value,
+        name: state.teamName || 'הקבוצה שלי',
+        formation: state.formation,
         players: state.team,
         createdAt: new Date().toISOString(),
       };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `${data.name.replace(/\s+/g,'_')}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const a = Object.assign(document.createElement('a'),{href:url,download:`${data.name.replace(/\s+/g,'_')}.json`});
+      a.click(); URL.revokeObjectURL(url);
     });
 
-    document.getElementById('addCustom').addEventListener('click', () => {
+    importBtn.addEventListener('click', ()=> importFile.click());
+    importFile.addEventListener('change', async (ev)=>{
+      const file = ev.target.files?.[0]; if(!file) return;
+      try{
+        const txt = await file.text();
+        const obj = JSON.parse(txt);
+        let changed = false;
+        if(Array.isArray(obj.players)){
+          // assume same schema as export (team)
+          state.team = obj.players.slice(0,11);
+          changed = true;
+        }
+        if(Array.isArray(obj) && obj.length && obj[0].name && obj[0].pos){
+          // assume array of players
+          state.players = obj.concat(state.players);
+          changed = true;
+        }
+        if(obj.formation && FORMATIONS[obj.formation]){ state.formation = obj.formation; changed = true; }
+        if(obj.name){ state.teamName = String(obj.name); changed = true; }
+        if(changed){ renderTeam(); renderFiltersInfo(); renderCards(); syncPersist(); toast('ייבוא בוצע'); }
+        else toast('קובץ לא מזוהה');
+      }catch(e){ toast('שגיאה בקריאת הקובץ'); }
+      finally{ ev.target.value=''; }
+    });
+
+    // ===== Custom Player =====
+    document.getElementById('addCustom').addEventListener('click', ()=>{
       const name = document.getElementById('pName').value.trim();
       const pos  = document.getElementById('pPos').value;
       const club = document.getElementById('pClub').value.trim() || 'קבוצה מותאמת';
       const ovr  = Math.max(0, Math.min(99, parseInt(document.getElementById('pOvr').value || '80', 10)));
       const img  = (document.getElementById('pImg').value.trim()) || placeholder(name || 'Player');
       if(!name) return toast('יש למלא שם שחקן');
-
-      const newP = { id: crypto.randomUUID(), name, pos, club, ovr, img };
+      const newP = { id: uid(), name, pos, club, ovr, img };
       state.players.unshift(newP);
-      renderCards();
+      renderCards(); syncPersist();
       toast('נוצר כרטיס שחקן!');
-      document.getElementById('pName').value = '';
-      document.getElementById('pClub').value = '';
-      document.getElementById('pImg').value = '';
+      ['pName','pClub','pImg'].forEach(id=>document.getElementById(id).value='');
     });
 
+    // ===== Formation & Team name changes =====
+    teamNameEl.addEventListener('input', ()=>{ state.teamName = teamNameEl.value; syncPersist(); });
+    formationEl.addEventListener('change', ()=>{ state.formation = formationEl.value; renderFiltersInfo(); syncPersist(); });
+
+    // ===== Toast =====
     function toast(msg){
       const t = document.getElementById('toast');
       const m = document.getElementById('toastMsg');
-      m.textContent = msg; t.hidden = false;
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => (t.hidden = true), 1800);
+      m.textContent = msg; t.hidden = false; clearTimeout(toast._t);
+      toast._t = setTimeout(()=> (t.hidden=true), 1800);
     }
 
-    // אתחול ראשון
-    renderCards();
-    renderTeam();
+    // ===== Auth (demo only – localStorage, NOT secure) =====
+    const loginModal = document.getElementById('loginModal');
+    const signupModal = document.getElementById('signupModal');
+    const openLogin = document.getElementById('openLogin');
+    const openSignup = document.getElementById('openSignup');
+    const userBadge = document.getElementById('userBadge');
+    const userHello = document.getElementById('userHello');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function setDialogEvents(){
+      document.querySelectorAll('.close').forEach(btn=>btn.addEventListener('click',()=>{
+        const id = btn.getAttribute('data-close');
+        document.getElementById(id)?.close();
+      }));
+      document.getElementById('goSignup').addEventListener('click', (e)=>{ e.preventDefault(); loginModal.close(); signupModal.showModal(); });
+      document.getElementById('goLogin').addEventListener('click', (e)=>{ e.preventDefault(); signupModal.close(); loginModal.showModal(); });
+      openLogin.addEventListener('click', ()=> loginModal.showModal());
+      openSignup.addEventListener('click', ()=> signupModal.showModal());
+    }
+
+    function refreshAuthUI(){
+      if(state.user){
+        userHello.textContent = `שלום, ${state.user.name?.split(' ')[0]||'משתמש'}`;
+        userBadge.hidden = false; openLogin.hidden = true; openSignup.hidden = true;
+      } else {
+        userBadge.hidden = true; openLogin.hidden = false; openSignup.hidden = false;
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass  = document.getElementById('loginPass').value;
+      const users = store.load('users', []);
+      const u = users.find(u=>u.email===email && u.pass===pass);
+      if(!u) return toast('אימייל או סיסמה שגויים');
+      state.user = { name:u.name, email:u.email }; syncPersist(); refreshAuthUI(); loginModal.close(); toast('מחובר/ת');
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name  = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const pass  = document.getElementById('signupPass').value;
+      const pass2 = document.getElementById('signupPass2').value;
+      if(pass!==pass2) return toast('הסיסמאות אינן תואמות');
+      const users = store.load('users', []);
+      if(users.some(u=>u.email===email)) return toast('אימייל כבר רשום');
+      users.push({ name, email, pass }); store.save('users', users);
+      toast('נוצר חשבון! התחבר/י'); signupModal.close(); loginModal.showModal();
+    });
+
+    logoutBtn.addEventListener('click', ()=>{ state.user=null; syncPersist(); refreshAuthUI(); toast('התנתקת'); });
+
+    // ===== Init =====
+    function init(){
+      renderFiltersInfo();
+      renderCards();
+      renderTeam();
+      refreshAuthUI();
+      setDialogEvents();
+      // keyboard: Enter on search triggers render (already via input), Esc closes dialogs
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ loginModal?.close(); signupModal?.close(); }});
+    }
+    init();
   </script>
 </body>
 </html>
