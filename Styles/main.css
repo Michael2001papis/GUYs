@@ -469,64 +469,127 @@ a {
   }
 }
 
-/* ======== MOBILE HOTFIX: paste at the very END of Styles/main.css ======== */
+/* ====================== MOBILE-FIRST RESPONSIVE PATCH ====================== */
+/* קונטיינר ופדינג בטוח עם נוטצ׳ים */
+:root {
+  --container: 1100px;
+}
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-inline: clamp(12px, 4vw, 24px);
+}
 
-/* עוזר לקלטים לא להידחף החוצה */
-input, select { min-width: 0; }
-
-/* טאבלטים ומטה */
-@media (max-width: 768px){
-  header{ padding:20px 14px 6px }
-  .container{ padding-inline:16px }
-
-  /* Navbar יתקפל יפה ולא יגלוש */
-  .topnav{ flex-wrap: wrap; gap:8px; padding-inline:12px }
-  .nav-actions{
-    width:100%;
-    display:flex; gap:8px; align-items:center;
-    overflow:auto;             /* גלילה אופקית קלה אם אין מקום */
-    -webkit-overflow-scrolling: touch;
-    padding-bottom:6px;
+.topnav {
+  padding-block: calc(10px + env(safe-area-inset-top) / 2);
+  padding-inline: clamp(12px, 3vw, 18px);
+}
+.topnav > .brand,
+.topnav > .nav-actions {
+  min-width: 0;
+} /* מונע גלילה אופקית */
+.nav-actions {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+@media (max-width: 640px) {
+  .brand span:last-child {
+    font-size: 16px;
   }
-  .nav-actions > *{ flex:0 0 auto } /* שלא ישברו שורות מוזרות */
-  .link, .auth-btn{ min-height:40px; padding-inline:10px }
-
-  /* מסננים: 2 עמודות במקום 4 */
-  .filters{ grid-template-columns: 1fr 1fr; gap:10px }
-
-  /* כרטיסים: מצמצמים */
-  .cards{ grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px }
-  .card{ padding:12px }
-  .card img{ height:150px }
-
-  /* פנלים ידידותיים לנייד */
-  .panel{ padding:12px; border-radius:14px }
-  .row{ grid-template-columns: 1fr } /* טפסי הקבוצה לעמודה אחת */
-  .toolbar{ gap:8px }
+  .nav-actions .link {
+    padding-inline: 10px;
+  }
 }
 
-/* מובייל קטן (≤480px) */
-@media (max-width: 480px){
-  .container{ padding-inline:12px }
-
-  /* מסננים: עמודה אחת נקייה */
-  .filters{ grid-template-columns: 1fr; }
-
-  /* כרטיס אחד בכל שורה – מלא רוחב */
-  .cards{ grid-template-columns: 1fr; }
-  .card img{ height:140px }
-
-  /* לחצנים וקישורים – גובה מגע מומלץ */
-  .btn, .auth-btn, .link{ min-height:44px; font-size:14px }
-
-  /* מיקום בטוח ל־notch של iPhone */
-  .topnav{ padding-top: calc(12px + env(safe-area-inset-top,0px)); }
-
-  /* מונים/טקסטים שלא יידחפו לצד */
-  .count{ margin-inline-start: 0 }
+/* מסננים – ברירת מחדל עמודה אחת; במסכים בינוניים 4 טורים */
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 10px 0 16px;
+}
+@media (min-width: 600px) {
+  .filters {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  }
 }
 
-/* מגע (בלי hover) – לא לעשות קפיצה בהובר */
-@media (hover:none) and (pointer:coarse){
-  .card:hover{ transform:none; box-shadow: var(--shadow) }
+/* רשת הכרטיסים – מדרגית */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 360px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 480px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+}
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* תמונות כרטיסים ביחס קבוע – בלי גובה קשיח */
+.card img {
+  aspect-ratio: 4/3;
+  height: auto;
+  object-fit: cover;
+}
+
+/* כפתורי כרטיסים – נערמים בניידים */
+@media (max-width: 480px) {
+  .card > div:last-child {
+    flex-direction: column !important;
+  } /* דורס inline-style */
+  .card .btn {
+    width: 100%;
+  }
+}
+
+/* שורות טפסים – עמודה אחת בניידים */
+.row {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 700px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* רוסטר גמיש יותר בניידים */
+.roster {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+/* מגע נעים והימנעות מזום אוטומטי ב-iOS */
+input,
+select,
+button {
+  min-height: 44px;
+  font-size: 16px;
+}
+
+/* מניעת גלילה אופקית */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* “חשיפה” – ודא שהכיתה המתאימה נכנסת */
+.panel {
+  opacity: 0;
+  transform: translateY(14px) scale(0.98);
+}
+.panel.reveal--in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
