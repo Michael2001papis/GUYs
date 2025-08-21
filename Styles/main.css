@@ -468,3 +468,65 @@ a {
     transition: none !important;
   }
 }
+
+/* ======== MOBILE HOTFIX: paste at the very END of Styles/main.css ======== */
+
+/* עוזר לקלטים לא להידחף החוצה */
+input, select { min-width: 0; }
+
+/* טאבלטים ומטה */
+@media (max-width: 768px){
+  header{ padding:20px 14px 6px }
+  .container{ padding-inline:16px }
+
+  /* Navbar יתקפל יפה ולא יגלוש */
+  .topnav{ flex-wrap: wrap; gap:8px; padding-inline:12px }
+  .nav-actions{
+    width:100%;
+    display:flex; gap:8px; align-items:center;
+    overflow:auto;             /* גלילה אופקית קלה אם אין מקום */
+    -webkit-overflow-scrolling: touch;
+    padding-bottom:6px;
+  }
+  .nav-actions > *{ flex:0 0 auto } /* שלא ישברו שורות מוזרות */
+  .link, .auth-btn{ min-height:40px; padding-inline:10px }
+
+  /* מסננים: 2 עמודות במקום 4 */
+  .filters{ grid-template-columns: 1fr 1fr; gap:10px }
+
+  /* כרטיסים: מצמצמים */
+  .cards{ grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px }
+  .card{ padding:12px }
+  .card img{ height:150px }
+
+  /* פנלים ידידותיים לנייד */
+  .panel{ padding:12px; border-radius:14px }
+  .row{ grid-template-columns: 1fr } /* טפסי הקבוצה לעמודה אחת */
+  .toolbar{ gap:8px }
+}
+
+/* מובייל קטן (≤480px) */
+@media (max-width: 480px){
+  .container{ padding-inline:12px }
+
+  /* מסננים: עמודה אחת נקייה */
+  .filters{ grid-template-columns: 1fr; }
+
+  /* כרטיס אחד בכל שורה – מלא רוחב */
+  .cards{ grid-template-columns: 1fr; }
+  .card img{ height:140px }
+
+  /* לחצנים וקישורים – גובה מגע מומלץ */
+  .btn, .auth-btn, .link{ min-height:44px; font-size:14px }
+
+  /* מיקום בטוח ל־notch של iPhone */
+  .topnav{ padding-top: calc(12px + env(safe-area-inset-top,0px)); }
+
+  /* מונים/טקסטים שלא יידחפו לצד */
+  .count{ margin-inline-start: 0 }
+}
+
+/* מגע (בלי hover) – לא לעשות קפיצה בהובר */
+@media (hover:none) and (pointer:coarse){
+  .card:hover{ transform:none; box-shadow: var(--shadow) }
+}
