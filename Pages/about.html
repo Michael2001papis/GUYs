@@ -4,35 +4,120 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ליגת‑מיני – אודות</title>
+    <title>ליגת-מיני – אודות</title>
+    <meta
+      name="description"
+      content="גרסה מודולרית של ליגת-מיני: חלוקה לתיקיות, קוד נקי, נגישות משופרת ודיפלוי קל ל-GitHub Pages."
+    />
+    <meta name="color-scheme" content="dark light" />
     <link rel="stylesheet" href="../Styles/main.css" />
   </head>
   <body>
-    <nav class="topnav">
-      <a class="brand" href="../"
-        ><span class="ball"></span><span>ליגת‑מיני</span></a
-      >
+    <nav class="topnav" aria-label="סרגל עליון">
+      <a class="brand" href="../" aria-label="בית">
+        <span class="ball" aria-hidden="true"></span><span>ליגת-מיני</span>
+      </a>
       <div class="nav-actions">
         <a class="link" href="./team.html">הקבוצה שלי</a>
-        <a class="link active" href="./about.html">אודות</a>
+        <a class="link active" href="./about.html" aria-current="page">אודות</a>
+        <!-- מתג מצב כהה/בהיר -->
+        <button
+          id="themeToggle"
+          class="auth-btn"
+          aria-pressed="false"
+          title="החלפת מצב תצוגה"
+        >
+          🌓
+        </button>
+        <!-- אזור משתמש -->
+        <div id="userBadge" class="user-badge" hidden>
+          <span id="userHello">שלום, אורח</span>
+          <button id="logoutBtn" class="logout">התנתקות</button>
+        </div>
+        <button id="openLogin" class="auth-btn" aria-haspopup="dialog">
+          התחברות
+        </button>
+        <button id="openSignup" class="auth-btn primary" aria-haspopup="dialog">
+          הרשמה
+        </button>
       </div>
     </nav>
 
     <main class="container">
-      <section class="panel">
-        <h2>אודות הפרויקט</h2>
+      <section class="panel reveal">
+        <h1 style="margin-bottom: 10px">אודות הפרויקט</h1>
         <p>
-          גרסה מודולרית של "ליגת‑מיני" – חלוקה לתיקיות, קוד נקי, ונגישות משופרת.
-          מתאים לדיפלוי ב‑GitHub Pages.
+          גרסה מודולרית של “ליגת-מיני” – חלוקה לתיקיות, קוד נקי, ונגישות משופרת.
+          מתאים לדיפלוי ב-GitHub Pages.
         </p>
         <ul>
-          <li>ביצועים: טעינת מודולים לפי עמוד, Lazy Images.</li>
-          <li>נגישות: כותרות, aria‑labels, ניגודיות תקינה.</li>
-          <li>קוד: הפרדה ל‑data / modules / pages / utils / Styles.</li>
+          <li>ביצועים: טעינת מודולים לפי עמוד, תמונות Lazy.</li>
+          <li>נגישות: כותרות, aria-labels, ניגודיות תקינה.</li>
+          <li>קוד: הפרדה ל-data / modules / pages / utils / Styles.</li>
         </ul>
+        <div class="toolbar" style="margin-top: 12px">
+          <span class="chip ok">גרסה: דמו</span>
+          <span class="chip">סטטי – ללא ספריות</span>
+        </div>
+      </section>
+
+      <section class="panel reveal">
+        <h2>מבנה הפרויקט</h2>
+        <pre style="white-space: pre-wrap; overflow: auto; margin: 0">
+GUYS/
+├─ index.html
+├─ Pages/
+│  ├─ team.html
+│  └─ about.html
+├─ Styles/
+│  └─ main.css
+├─ General data/
+│  ├─ constants.js
+│  └─ seed.js
+└─ Important data/
+   ├─ utils/store.js
+   ├─ modules/
+   │  ├─ teamCore.js
+   │  ├─ ui.js
+   │  ├─ auth.js
+   │  ├─ theme.js
+   │  └─ motion.js
+   └─ pages/
+      ├─ home.js
+      └─ team.js
+        </pre>
       </section>
     </main>
 
-    <footer>© mini‑league – גרסת דמו חינוכית.</footer>
+    <footer>© mini-league – גרסת דמו חינוכית.</footer>
+
+    <!-- דיאלוגים (כדי שכפתורי התחברות/הרשמה יעבדו גם כאן) -->
+    <dialog id="loginModal" class="modal" aria-labelledby="loginTitle"></dialog>
+    <dialog
+      id="signupModal"
+      class="modal"
+      aria-labelledby="signupTitle"
+    ></dialog>
+    <div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
+
+    <!-- בלוק מודולים אחד נקי -->
+    <script type="module">
+      import {
+        applySavedTheme,
+        setupThemeToggle,
+      } from "../Important%20data/modules/theme.js";
+      import {
+        setupReveal,
+        attachRipple,
+      } from "../Important%20data/modules/motion.js";
+      import { mountAuth } from "../Important%20data/modules/auth.js";
+
+      applySavedTheme(); // טען מצב כהה/בהיר שהיה שמור
+      setupThemeToggle("#themeToggle"); // הפעל כפתור 🌓
+      mountAuth({ loginModalId: "loginModal", signupModalId: "signupModal" });
+
+      setupReveal(); // אנימציית חשיפה ל-.reveal
+      attachRipple(); // ריפל קליק לכפתורים/קישורים
+    </script>
   </body>
 </html>

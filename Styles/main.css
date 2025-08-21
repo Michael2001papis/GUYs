@@ -1,26 +1,53 @@
-/* ======================= Styles/main.css ======================= */
+/* ===== THEME TOKENS =================================================== */
 :root {
   --bg: #0f1226;
   --panel: #14183a;
-  --muted: #aab1d6;
+  --card: #1c214f;
   --text: #eaf0ff;
+  --muted: #aab1d6;
   --accent: #7aa7ff;
   --accent-2: #7fffd4;
   --danger: #ff6b6b;
   --ok: #00d38b;
-  --card: #1c214f;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
   --radius: 18px;
+  --ring: 0 0 0 3px #7aa7ff55;
 }
+
+/* LIGHT THEME OVERRIDES (עם כפתור) */
+:root[data-theme="light"] {
+  --bg: #f7f8ff;
+  --panel: #ffffff;
+  --card: #f0f3ff;
+  --text: #111424;
+  --muted: #5a6286;
+  --accent: #4b74ff;
+  --accent-2: #39e2b0;
+  --shadow: 0 12px 30px rgba(13, 31, 99, 0.15);
+}
+
+/* ===== BASE =========================================================== */
 * {
   box-sizing: border-box;
 }
+html,
+body {
+  height: 100%;
+}
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, segoe ui, roboto, ubuntu, cantarell,
-    noto sans, helvetica, arial;
-  background: radial-gradient(1200px 600px at 80% -10%, #1e265e, transparent),
-    linear-gradient(180deg, #0b0e23, #080a1a);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+    Noto Sans, Helvetica, Arial;
+  background: radial-gradient(
+      1200px 600px at 80% -10%,
+      color-mix(in oklab, var(--accent) 35%, transparent),
+      transparent
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--bg) 96%, #000 4%),
+      var(--bg)
+    );
   color: var(--text);
 }
 .container {
@@ -28,18 +55,31 @@ body {
   margin: 0 auto;
   padding: 18px;
 }
+
+/* ===== ACCESSIBILITY ================================================== */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: 10px;
+}
+
+/* ===== NAVBAR ========================================================= */
 .topnav {
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  background: linear-gradient(180deg, #0e1130cc, #0b0e23cc);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid #2a306a;
+  border-bottom: 1px solid color-mix(in oklab, var(--panel) 70%, #5a6cff 30%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel) 92%, transparent),
+    color-mix(in oklab, var(--bg) 65%, transparent)
+  );
+  backdrop-filter: blur(8px);
 }
 .brand {
   display: flex;
@@ -54,35 +94,50 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #7fffd4, transparent 70%),
-    radial-gradient(circle at 70% 70%, #7aa7ff, transparent 60%), #0f1333;
-  border: 1px solid #2a306a;
-  box-shadow: 0 0 12px #7fffd4aa inset;
+  background: radial-gradient(
+      circle at 30% 30%,
+      var(--accent-2),
+      transparent 70%
+    ),
+    radial-gradient(circle at 70% 70%, var(--accent), transparent 60%),
+    color-mix(in oklab, var(--panel) 88%, #000);
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6aa9ff);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--accent-2) 55%, transparent)
+    inset;
 }
 .nav-actions {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
-.link {
+.link,
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--panel) 65%, #6a74ff 35%);
+  background: color-mix(in oklab, var(--panel) 85%, transparent);
   color: var(--muted);
   text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
 }
 .link:hover,
-.link.active {
-  background: #0f1333;
-  border: 1px solid #2a306a;
-  color: #cfe3ff;
+.auth-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  color: color-mix(in oklab, var(--text) 85%, white);
 }
-.auth-btn {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid #2a306a;
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
+.link.active {
+  background: color-mix(in oklab, var(--accent) 25%, transparent);
+  color: var(--text);
 }
 .auth-btn.primary {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
@@ -93,19 +148,21 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #0f1333;
-  border: 1px solid #2a306a;
+  background: color-mix(in oklab, var(--panel) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #7aa7ff);
   border-radius: 999px;
   padding: 6px 10px;
 }
 .logout {
   background: transparent;
-  border: 1px solid #2a306a;
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #ff6b6b);
   color: var(--danger);
   border-radius: 999px;
   padding: 4px 8px;
   cursor: pointer;
 }
+
+/* ===== HEADER ========================================================= */
 header {
   padding: 28px 18px 8px;
   text-align: center;
@@ -118,15 +175,29 @@ h1 {
 .sub {
   color: var(--muted);
 }
+
+/* ===== SECTIONS / PANELS ============================================= */
 section {
   margin: 26px 0;
 }
 .panel {
-  background: linear-gradient(180deg, var(--panel), #10143a);
-  border: 1px solid #2a306a;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel) 96%, #000 4%),
+    color-mix(in oklab, var(--panel) 88%, #000 12%)
+  );
+  border: 1px solid color-mix(in oklab, var(--panel) 65%, #7aa7ff 15%);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 16px;
+  /* כניסה עדינה */
+  opacity: 0;
+  transform: translateY(14px) scale(0.98);
+}
+.panel.reveal--in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
 .row {
   display: grid;
@@ -145,12 +216,20 @@ label {
 input,
 select {
   width: 100%;
-  background: #0f1333;
-  border: 1px solid #2a306a;
+  background: color-mix(in oklab, var(--panel) 86%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel) 65%, #6a74ff 25%);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
+input:focus-visible,
+select:focus-visible {
+  box-shadow: var(--ring);
+  border-color: color-mix(in oklab, var(--accent) 55%, #fff);
+}
+
+/* ===== FILTERS + CARDS =============================================== */
 .filters {
   display: grid;
   grid-template-columns: 2fr repeat(3, 1fr);
@@ -168,18 +247,24 @@ select {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 16px;
 }
+
 .card {
-  background: linear-gradient(180deg, var(--card), #14183a);
+  background: linear-gradient(
+    180deg,
+    var(--card),
+    color-mix(in oklab, var(--panel) 88%, #000 12%)
+  );
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 14px;
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.3s ease;
 }
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  transform: translateY(-6px) rotateX(0.6deg) rotateY(-0.6deg);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
 }
 .badge {
   position: absolute;
@@ -197,6 +282,7 @@ select {
   height: 170px;
   object-fit: cover;
   border-radius: 14px;
+  filter: saturate(1.05) contrast(1.02);
 }
 .card h3 {
   margin: 10px 0 6px;
@@ -215,18 +301,22 @@ select {
   margin: 12px 0;
 }
 .stat {
-  background: #0f1333;
-  border: 1px solid #262c64;
+  background: color-mix(in oklab, var(--panel) 86%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6271d6);
   border-radius: 12px;
   padding: 6px 10px;
   font-size: 12px;
 }
+
 .btn {
   cursor: pointer;
   border: 0;
   border-radius: 12px;
   padding: 10px 12px;
   font-weight: 700;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 .btn-accent {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
@@ -235,8 +325,30 @@ select {
 .btn-ghost {
   background: transparent;
   color: var(--muted);
-  border: 1px solid #2a306a;
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6a74ff);
 }
+
+/* Ripple element (נוצר דינמית) */
+.ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: color-mix(in oklab, var(--text) 20%, var(--accent-2));
+  animation: ripple 0.6s ease;
+}
+@keyframes ripple {
+  to {
+    transform: translate(-50%, -50%) scale(32);
+    opacity: 0;
+  }
+}
+
+/* ===== TEAM BUILDER =================================================== */
 .roster {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -244,8 +356,8 @@ select {
   margin-top: 12px;
 }
 .slot {
-  background: #0f1333;
-  border: 1px dashed #2a306a;
+  background: color-mix(in oklab, var(--panel) 86%, transparent);
+  border: 1px dashed color-mix(in oklab, var(--panel) 60%, #6a74ff);
   border-radius: 12px;
   padding: 10px;
   display: flex;
@@ -259,7 +371,7 @@ select {
 }
 .slot .rm {
   background: transparent;
-  border: 1px solid #2a306a;
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #ff6b6b);
   color: var(--danger);
   border-radius: 10px;
   padding: 6px 8px;
@@ -275,6 +387,8 @@ select {
   margin-inline-start: auto;
   color: var(--muted);
 }
+
+/* ===== TOAST + MODALS ================================================ */
 .toast {
   position: fixed;
   inset-inline: 0;
@@ -285,11 +399,12 @@ select {
 }
 .toast > div {
   pointer-events: auto;
-  background: #0f1333;
-  border: 1px solid #2a306a;
+  background: color-mix(in oklab, var(--panel) 86%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6a74ff);
   padding: 10px 14px;
   border-radius: 999px;
 }
+
 footer {
   color: var(--muted);
   text-align: center;
@@ -298,11 +413,14 @@ footer {
 a {
   color: var(--accent);
 }
+.dialog-body {
+  padding: 14px;
+}
 .modal {
   border: 0;
   border-radius: 18px;
   padding: 0;
-  background: #0f1333;
+  background: color-mix(in oklab, var(--panel) 96%, #000 4%);
   color: var(--text);
   box-shadow: var(--shadow);
   width: min(520px, 92vw);
@@ -312,12 +430,12 @@ a {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  border-bottom: 1px solid #2a306a;
+  border-bottom: 1px solid color-mix(in oklab, var(--panel) 60%, #6a74ff);
   padding: 12px 14px;
 }
 .close {
   background: transparent;
-  border: 1px solid #2a306a;
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6a74ff);
   color: var(--muted);
   border-radius: 999px;
   padding: 6px 10px;
@@ -332,8 +450,8 @@ a {
   gap: 6px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid #2a306a;
-  background: #0f1333;
+  border: 1px solid color-mix(in oklab, var(--panel) 60%, #6a74ff);
+  background: color-mix(in oklab, var(--panel) 86%, transparent);
   color: var(--muted);
   font-size: 12px;
 }
@@ -341,4 +459,12 @@ a {
   color: #06121f;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   border: 0;
+}
+
+/* ===== REDUCED MOTION ================================================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

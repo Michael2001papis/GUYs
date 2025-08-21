@@ -1,61 +1,143 @@
-<!-- ======================= Pages/team.html ======================= -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ליגת‑מיני – הקבוצה שלי</title>
-<link rel="stylesheet" href="../Styles/main.css" />
-</head>
-<body>
-<nav class="topnav">
-<a class="brand" href="../"><span class="ball"></span><span>ליגת‑מיני</span></a>
-<div class="nav-actions">
-<a class="link active" href="./team.html">הקבוצה שלי</a>
-<a class="link" href="./about.html">אודות</a>
-<div id="userBadge" class="user-badge" hidden>
-<span id="userHello">שלום, אורח</span>
-<button id="logoutBtn" class="logout">התנתקות</button>
-</div>
-<button id="openLogin" class="auth-btn">התחברות</button>
-<button id="openSignup" class="auth-btn primary">הרשמה</button>
-</div>
-</nav>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>ליגת-מיני – הקבוצה שלי</title>
+    <link rel="stylesheet" href="../Styles/main.css" />
+  </head>
+  <body>
+    <nav class="topnav" aria-label="סרגל עליון">
+      <a class="brand" href="../" aria-label="בית">
+        <span class="ball" aria-hidden="true"></span>
+        <span>ליגת-מיני</span>
+      </a>
+      <div class="nav-actions">
+        <a class="link active" href="./team.html">הקבוצה שלי</a>
+        <a class="link" href="./about.html">אודות</a>
 
+        <!-- מתג כהה/בהיר -->
+        <button
+          id="themeToggle"
+          class="auth-btn"
+          aria-pressed="false"
+          title="החלפת מצב תצוגה"
+        >
+          🌓
+        </button>
 
-<main class="container">
-<section class="panel" id="team-builder">
-<h2>בניית הקבוצה שלי</h2>
-<div class="row">
-<div>
-<label for="teamName">שם הקבוצה</label>
-<input id="teamName" placeholder="הקלד/י שם קבוצה" />
-</div>
-<div>
-<label for="formation">מערך</label>
-<select id="formation"></select>
-</div>
-</div>
-<div class="toolbar">
-<button id="resetTeam" class="btn btn-ghost">איפוס קבוצה</button>
-<button id="exportTeam" class="btn btn-accent">ייצוא הקבוצה ל‑JSON</button>
-<span class="count" id="teamCount">0/11</span>
-<span class="chip" id="formationRule"></span>
-</div>
-<div id="roster" class="roster" aria-live="polite"></div>
-</section>
+        <!-- באדג׳ משתמש + התחברות/הרשמה (דמו) -->
+        <div id="userBadge" class="user-badge" hidden>
+          <span id="userHello">שלום, אורח</span>
+          <button id="logoutBtn" class="logout">התנתקות</button>
+        </div>
+        <button id="openLogin" class="auth-btn">התחברות</button>
+        <button id="openSignup" class="auth-btn primary">הרשמה</button>
+      </div>
+    </nav>
 
+    <main class="container">
+      <!-- בניית קבוצה -->
+      <section class="panel reveal" id="team-builder">
+        <h2>בניית הקבוצה שלי</h2>
+        <div class="row">
+          <div>
+            <label for="teamName">שם הקבוצה</label>
+            <input id="teamName" placeholder="הקלד/י שם קבוצה" />
+          </div>
+          <div>
+            <label for="formation">מערך</label>
+            <select id="formation"></select>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="resetTeam" class="btn btn-ghost">איפוס קבוצה</button>
+          <button id="exportTeam" class="btn btn-accent">
+            ייצוא הקבוצה ל-JSON
+          </button>
+          <span class="count" id="teamCount">0/11</span>
+          <span class="chip" id="formationRule"></span>
+        </div>
+        <div id="roster" class="roster" aria-live="polite"></div>
+      </section>
 
-<section class="panel" id="custom-player">
-<h2>הוספת שחקן מותאם</h2>
-<div class="row">
-<div>
-<label for="pName">שם השחקן</label>
-<input id="pName" placeholder="לדוגמה: מיכאל פאפיסמדוב"/>
-</div>
-<div>
-<label for="pPos">עמדה</label>
-<select id="pPos"></select>
-</div>
-<div>
+      <!-- שחקן מותאם -->
+      <section class="panel reveal" id="custom-player">
+        <h2>הוספת שחקן מותאם</h2>
+        <div class="row">
+          <div>
+            <label for="pName">שם השחקן</label>
+            <input id="pName" placeholder="לדוגמה: מיכאל פאפיסמדוב" />
+          </div>
+          <div>
+            <label for="pPos">עמדה</label>
+            <select id="pPos"></select>
+          </div>
+          <div>
+            <label for="pClub">מועדון</label>
+            <input id="pClub" placeholder="המועדון שלך" />
+          </div>
+          <div>
+            <label for="pOvr">דירוג כללי (0–99)</label>
+            <input id="pOvr" type="number" min="0" max="99" value="85" />
+          </div>
+          <div style="grid-column: 1/-1">
+            <label for="pImg">תמונת שחקן (URL)</label>
+            <input id="pImg" placeholder="https://example.com/photo.jpg" />
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="addCustom" class="btn btn-accent">
+            יצירת כרטיס שחקן
+          </button>
+          <span class="chip" id="validationChip"
+            >שמור/י על דירוג בין 0 ל-99</span
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer>ניהול קבוצה ושחקנים בשמירה מקומית בלבד (דמו).</footer>
+
+    <!-- דיאלוגים -->
+    <dialog id="loginModal" class="modal" aria-labelledby="loginTitle"></dialog>
+    <dialog
+      id="signupModal"
+      class="modal"
+      aria-labelledby="signupTitle"
+    ></dialog>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
+
+    <!-- מודולים (נתיבים יחסיים נכונים מקובץ בתוך Pages/) -->
+    <script type="module">
+      /* תצוגה: מצב כהה/בהיר + אנימציות חשיפה/ריפל + דיאלוגי התחברות */
+      import {
+        applySavedTheme,
+        setupThemeToggle,
+      } from "../Important%20data/modules/theme.js";
+      import {
+        setupReveal,
+        attachRipple,
+      } from "../Important%20data/modules/motion.js";
+      import { mountAuth } from "../Important%20data/modules/auth.js";
+
+      /* לוגיקה של עמוד הקבוצה */
+      import { mountTeamPage } from "../Important%20data/pages/team.js";
+
+      // גלובלי
+      applySavedTheme();
+      setupThemeToggle("#themeToggle");
+      mountAuth({ loginModalId: "loginModal", signupModalId: "signupModal" });
+
+      // אפקטים
+      setupReveal(); // מפעיל את כניסת .reveal
+      attachRipple(); // ריפל לכפתורים וללינקים
+
+      // הפעלת עמוד הקבוצה
+      mountTeamPage();
+    </script>
+  </body>
 </html>

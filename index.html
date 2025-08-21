@@ -1,82 +1,157 @@
 <!-- ======================= index.html ======================= -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ליגת‑מיני – שחקנים</title>
-<link rel="stylesheet" href="./Styles/main.css" />
-</head>
-<body>
-<nav class="topnav" aria-label="סרגל עליון">
-<a class="brand" href="./" aria-label="בית">
-<span class="ball" aria-hidden="true"></span>
-<span>ליגת‑מיני</span>
-</a>
-<div class="nav-actions">
-<a class="link" href="./Pages/team.html">הקבוצה שלי</a>
-<a class="link" href="./Pages/about.html">אודות</a>
-<div id="userBadge" class="user-badge" hidden>
-<span id="userHello">שלום, אורח</span>
-<button id="logoutBtn" class="logout">התנתקות</button>
-</div>
-<button id="openLogin" class="auth-btn" aria-haspopup="dialog">התחברות</button>
-<button id="openSignup" class="auth-btn primary" aria-haspopup="dialog">הרשמה</button>
-</div>
-</nav>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ליגת-מיני – שחקנים</title>
+    <meta
+      name="description"
+      content="ליגת-מיני: כרטיסי שחקנים, סינון ומיון, ובניית קבוצה – גרסה מודולרית, מהירה ונגישה."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="./Styles/main.css" />
+  </head>
+  <body>
+    <nav class="topnav" aria-label="סרגל עליון">
+      <a class="brand" href="./" aria-label="בית">
+        <span class="ball" aria-hidden="true"></span>
+        <span>ליגת-מיני</span>
+      </a>
 
+      <div class="nav-actions">
+        <!-- מתג מצב כהה/בהיר -->
+        <button
+          id="themeToggle"
+          class="auth-btn"
+          aria-pressed="false"
+          title="החלפת מצב תצוגה"
+        >
+          🌓
+        </button>
 
-<header>
-<h1>כרטיסי שחקנים</h1>
-<p class="sub">סינון, מיון ושמירה – גרסה מודולרית לפי התיקיות שלך</p>
-</header>
+        <a class="link" href="./Pages/team.html">הקבוצה שלי</a>
+        <a class="link" href="./Pages/about.html">אודות</a>
 
+        <!-- אזור משתמש -->
+        <div id="userBadge" class="user-badge" hidden>
+          <span id="userHello">שלום, אורח</span>
+          <button id="logoutBtn" class="logout">התנתקות</button>
+        </div>
+        <button id="openLogin" class="auth-btn" aria-haspopup="dialog">
+          התחברות
+        </button>
+        <button id="openSignup" class="auth-btn primary" aria-haspopup="dialog">
+          הרשמה
+        </button>
+      </div>
+    </nav>
 
-<main class="container">
-<section class="panel">
-<h2>שחקנים בולטים</h2>
-<div class="filters" role="region" aria-label="מסננים">
-<input id="q" placeholder="חיפוש לפי שם או מועדון" aria-label="חיפוש" />
-<select id="fPos" aria-label="סינון לפי עמדה">
-<option value="">כל העמדות</option>
-<option>חלוץ</option>
-<option>קשר</option>
-<option>מגן</option>
-<option>בלם</option>
-<option>שוער</option>
-</select>
-<select id="sortBy" aria-label="מיון">
-<option value="ovrDesc">דירוג מהגבוה לנמוך</option>
-<option value="ovrAsc">דירוג מהנמוך לגבוה</option>
-<option value="name">שם (א״ב)</option>
-</select>
-<input id="minOvr" type="number" min="0" max="99" value="0" aria-label="מינ׳ דירוג"/>
-</div>
-<div id="cards" class="cards" aria-live="polite"></div>
-<div class="toolbar">
-<button id="importBtn" class="btn btn-ghost">ייבוא שחקנים/קבוצה מ‑JSON</button>
-<input id="importFile" type="file" accept="application/json" hidden />
-<span class="chip" id="playersCount"></span>
-</div>
-</section>
-</main>
+    <header>
+      <h1>כרטיסי שחקנים</h1>
+      <p class="sub">סינון, מיון ושמירה – גרסה מודולרית לפי התיקיות שלך</p>
+    </header>
 
+    <main class="container" role="main">
+      <section class="panel reveal" aria-labelledby="playersTitle">
+        <h2 id="playersTitle">שחקנים בולטים</h2>
 
-<footer>
-נבנה סטטי, ללא ספריות חיצוניות. שמירה מקומית ב‑localStorage.
-</footer>
+        <div class="filters" role="region" aria-label="מסננים">
+          <input
+            id="q"
+            placeholder="חיפוש לפי שם או מועדון"
+            aria-label="חיפוש"
+          />
+          <select id="fPos" aria-label="סינון לפי עמדה">
+            <option value="">כל העמדות</option>
+            <option>חלוץ</option>
+            <option>קשר</option>
+            <option>מגן</option>
+            <option>בלם</option>
+            <option>שוער</option>
+          </select>
+          <select id="sortBy" aria-label="מיון">
+            <option value="ovrDesc">דירוג מהגבוה לנמוך</option>
+            <option value="ovrAsc">דירוג מהנמוך לגבוה</option>
+            <option value="name">שם (א״ב)</option>
+          </select>
+          <input
+            id="minOvr"
+            type="number"
+            min="0"
+            max="99"
+            value="0"
+            aria-label="מינ׳ דירוג"
+          />
+        </div>
 
+        <!-- תוקן: כפל class הוסר -->
+        <div id="cards" class="cards reveal" aria-live="polite"></div>
 
-<dialog id="loginModal" class="modal" aria-labelledby="loginTitle"></dialog>
-<dialog id="signupModal" class="modal" aria-labelledby="signupTitle"></dialog>
-<div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
+        <div class="toolbar">
+          <button id="importBtn" class="btn btn-ghost">
+            ייבוא שחקנים/קבוצה מ-JSON
+          </button>
+          <input id="importFile" type="file" accept="application/json" hidden />
+          <span class="chip" id="playersCount"></span>
+        </div>
+      </section>
+    </main>
 
+    <footer>
+      נבנה סטטי, ללא ספריות חיצוניות. שמירה מקומית ב-localStorage.
+    </footer>
 
-<script type="module">
-import { mountHome } from './Important%20data/pages/home.js';
-import { mountAuth } from './Important%20data/modules/auth.js';
-mountAuth({ loginModalId: 'loginModal', signupModalId: 'signupModal' });
-mountHome();
-</script>
-</body>
+    <!-- מודאלים גלובליים -->
+    <dialog id="loginModal" class="modal" aria-labelledby="loginTitle"></dialog>
+    <dialog
+      id="signupModal"
+      class="modal"
+      aria-labelledby="signupTitle"
+    ></dialog>
+    <div class="toast" id="toast" hidden><div id="toastMsg"></div></div>
+
+    <noscript>
+      <div
+        style="
+          margin: 16px;
+          padding: 12px;
+          border-radius: 12px;
+          background: #222;
+          color: #fff;
+        "
+      >
+        האתר דורש JavaScript פעיל כדי לעבוד (סינון, שמירה, בניית קבוצה).
+      </div>
+    </noscript>
+
+    <!-- מודול יחיד נקי -->
+    <script type="module">
+      // תכונות כלליות
+      import {
+        applySavedTheme,
+        setupThemeToggle,
+      } from "./Important%20data/modules/theme.js";
+      import {
+        setupReveal,
+        attachRipple,
+      } from "./Important%20data/modules/motion.js";
+      import { mountAuth } from "./Important%20data/modules/auth.js";
+
+      // לוגיקת דף הבית (כרטיסים, מסננים)
+      import { mountHome } from "./Important%20data/pages/home.js";
+
+      // הפעלות גלובליות
+      applySavedTheme(); // טען מצב כהה/בהיר שהיה שמור
+      setupThemeToggle("#themeToggle"); // הפעל כפתור 🌓
+      mountAuth({ loginModalId: "loginModal", signupModalId: "signupModal" });
+
+      // אנימציות/אפקטים
+      setupReveal(); // מפעיל .reveal
+      attachRipple(); // ריפל לכפתורים/לינקים
+
+      // ספציפי לעמוד הבית
+      mountHome();
+    </script>
+  </body>
 </html>
